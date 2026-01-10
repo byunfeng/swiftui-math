@@ -30,7 +30,8 @@ extension Math {
       guard
         let graphicsFont = FontRegistry.shared.graphicsFont(named: font.name),
         let glyphName = graphicsFont.name(for: glyph) as String?,
-        let variantGlyphs = table.vVariants[glyphName]
+        let variantGlyphs = table.vVariants[glyphName],
+        !variantGlyphs.isEmpty
       else {
         return [glyph]
       }
@@ -44,7 +45,8 @@ extension Math {
       guard
         let graphicsFont = FontRegistry.shared.graphicsFont(named: font.name),
         let glyphName = graphicsFont.name(for: glyph) as String?,
-        let variantGlyphs = table.hVariants[glyphName]
+        let variantGlyphs = table.hVariants[glyphName],
+        !variantGlyphs.isEmpty
       else {
         return [glyph]
       }
@@ -58,7 +60,8 @@ extension Math {
       guard
         let graphicsFont = FontRegistry.shared.graphicsFont(named: font.name),
         let glyphName = graphicsFont.name(for: glyph) as String?,
-        let variantGlyphs = table.vVariants[glyphName]
+        let variantGlyphs = table.vVariants[glyphName],
+        !variantGlyphs.isEmpty
       else {
         return glyph
       }
