@@ -81,6 +81,8 @@ extension Math {
       "ddot": "\u{0308}",
       "check": "\u{030C}",
       "vec": "\u{20D7}",
+      "overrightarrow": "\u{20D7}",
+      "overleftarrow": "\u{20D6}",
       "widehat": "\u{0302}",
       "widetilde": "\u{0303}",
     ]

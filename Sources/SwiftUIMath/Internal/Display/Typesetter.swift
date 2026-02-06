@@ -1255,16 +1255,17 @@ extension Math {
           }
 
         case .accent:
-          if maxWidth > 0 {
-            // When line wrapping is enabled, render the accent properly but inline
-            // to avoid premature line flushing
+          let accent = atom as! Accent
+          let shouldUseInlineComposedAccent =
+            maxWidth > 0 && !self.shouldForceDisplayAccent(accent)
 
-            let accent = atom as! Accent
+          if shouldUseInlineComposedAccent {
+            // Keep composed-character path for single-character textual accents
+            // (for example, \acute{e}) so word wrapping stays natural.
 
             // Get the base character from innerList
             var baseChar = ""
             if let innerList = accent.innerList, !innerList.atoms.isEmpty {
-              // Convert innerList to string
               baseChar = Math.Parser.atomListToString(innerList)
             }
 
@@ -1310,7 +1311,9 @@ extension Math {
             // Treat accent as ordinary for spacing purposes
             atom.type = .ordinary
           } else {
-            // Original behavior when no width constraint
+            // Force display-accent layout for vector accents and multi-char accentees
+            // so the arrow stretches and keeps distance from the base letters.
+
             // Check if we need to break the line due to width constraints
             self.checkAndBreakLine()
             // stash the existing layout
@@ -1321,7 +1324,6 @@ extension Math {
             self.addInterElementSpace(prevNode, currentType: .ordinary)
             atom.type = .ordinary
 
-            let accent = atom as! Accent?
             let display = self.makeAccent(accent)
             displayAtoms.append(display!)
             currentPosition.x += display!.width
@@ -2601,6 +2603,20 @@ extension Math {
     }
 
     // MARK: - Accents
+
+    func shouldForceDisplayAccent(_ accent: Accent) -> Bool {
+      // U+20D7 combining right arrow above (\\vec, \\overrightarrow)
+      if accent.nucleus == "\u{20D7}" {
+        return true
+      }
+
+      // U+20D6 combining left arrow above (\\overleftarrow)
+      if accent.nucleus == "\u{20D6}" {
+        return true
+      }
+
+      return !self.isSingleCharAccentee(accent)
+    }
 
     func isSingleCharAccentee(_ accent: Accent?) -> Bool {
       guard let accent = accent else { return false }

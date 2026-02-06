@@ -1763,6 +1763,26 @@ struct TypesetterTests {
     #expect(abs(display.width - 44.86) <= 0.01)
   }
 
+  @Test
+  func vectorAccentWithMultipleCharactersUsesDisplayAccentWhenWidthConstrained() throws {
+    let font = try makeFont()
+    let mathList = Math.Parser.build(fromString: #" \vec{AB} "#)
+    #expect(mathList != nil)
+
+    let display = Math.Typesetter.createLineForMathList(
+      mathList, font: font, style: .display, maxWidth: 200)
+    let root = try #require(display)
+    #expect(root.children.count == 1)
+
+    let accentDisplay = try #require(root.children[0] as? Math.DisplayAccent)
+    let accentee = try #require(accentDisplay.accentee)
+    #expect(accentee.children.count == 1)
+
+    let textRun = try #require(accentee.children[0] as? Math.DisplayTextRun)
+    #expect(textRun.atoms.count == 2)
+    #expect(!textRun.text.isEmpty)
+  }
+
   // MARK: - Interatom Line Breaking Tests
 
   @Test

@@ -2517,4 +2517,18 @@ struct ParserTests {
     }
   }
 
+  @Test
+  func overrightarrowParsesAsAccent() throws {
+    var error: Math.ParserError? = nil
+    let list = Math.Parser.build(fromString: #" \overrightarrow{AB} "#, error: &error)
+
+    #expect(error == nil)
+    let unwrappedList = try #require(list)
+    #expect(unwrappedList.atoms.count == 1)
+
+    let accent = try #require(unwrappedList.atoms[0] as? Math.Accent)
+    #expect(accent.nucleus == "\u{20D7}")
+    #expect(accent.innerList?.atoms.count == 2)
+  }
+
 }
