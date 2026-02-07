@@ -228,6 +228,7 @@ extension Math {
       "models": Atom(type: .relation, nucleus: "\u{22A7}"),
       "perp": Atom(type: .relation, nucleus: "\u{27C2}"),
       "implies": Atom(type: .relation, nucleus: "\u{27F9}"),
+      "therefore": Atom(type: .relation, nucleus: "\u{2234}"),
 
       // operators
       "times": times(),
@@ -442,6 +443,7 @@ extension Math {
       "mathbfit": .boldItalic,
       "bm": .boldItalic,
       "text": .roman,
+      "operatorname": .roman,
     ]
 
     private static let matrixEnvs: [String: [String]] = [

@@ -41,6 +41,31 @@ extension CGContext {
     translateBy(x: list.position.x, y: list.position.y)
     textPosition = .zero
 
+    let bounds = CGRect(
+      x: 0,
+      y: -list.descent,
+      width: list.width,
+      height: list.ascent + list.descent
+    )
+
+    if let background = list.localBackgroundColor {
+      setFillColor(background)
+      fill(bounds)
+    }
+
+    if list.localBorderWidth > 0 {
+      let borderColor =
+        list.localBorderColor
+        ?? list.localTextColor
+        ?? list.textColor
+        ?? foregroundColor
+      setStrokeColor(borderColor)
+      setLineWidth(list.localBorderWidth)
+
+      let inset = list.localBorderWidth / 2
+      stroke(bounds.insetBy(dx: inset, dy: inset))
+    }
+
     for child in list.children {
       draw(child, foregroundColor: foregroundColor)
     }

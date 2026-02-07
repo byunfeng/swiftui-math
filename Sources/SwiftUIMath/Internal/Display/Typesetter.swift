@@ -1051,14 +1051,33 @@ extension Math {
         case .colorBox:
           // Create the colorbox display first (pass maxWidth for inner breaking)
           let colorboxAtom = atom as! ColorBox
-          let display = Typesetter.createLineForMathList(
+          let innerDisplay = Typesetter.createLineForMathList(
             colorboxAtom.innerList, font: font, style: style, maxWidth: maxWidth)
+          guard let innerDisplay else {
+            continue
+          }
 
-          display!.localBackgroundColor = CGColor.fromHexString(colorboxAtom.colorString)
+          let decoratedDisplay = DisplayList(children: [innerDisplay], range: innerDisplay.range)
+          let ruleThickness = max(styleFont.metrics.fractionRuleThickness, 0.75)
+          let horizontalPadding = ruleThickness * 2
+          let verticalPadding = ruleThickness * 1.5
+
+          innerDisplay.position = CGPoint(x: horizontalPadding, y: 0)
+          decoratedDisplay.width = innerDisplay.width + horizontalPadding * 2
+          decoratedDisplay.ascent = innerDisplay.ascent + verticalPadding
+          decoratedDisplay.descent = innerDisplay.descent + verticalPadding
+
+          switch colorboxAtom.renderStyle {
+          case .fill:
+            decoratedDisplay.localBackgroundColor = CGColor.fromHexString(colorboxAtom.colorString)
+          case .stroke:
+            decoratedDisplay.localBorderColor = CGColor.fromHexString(colorboxAtom.colorString)
+            decoratedDisplay.localBorderWidth = ruleThickness
+          }
 
           // Check if we need to break before adding this colorbox
           let shouldBreak = shouldBreakBeforeDisplay(
-            display!, prevNode: prevNode, displayType: .ordinary)
+            decoratedDisplay, prevNode: prevNode, displayType: .ordinary)
 
           // Flush current line to convert accumulated text to displays
           if currentLine.length > 0 {
@@ -1072,9 +1091,9 @@ extension Math {
             self.addInterElementSpace(prevNode, currentType: .ordinary)
           }
 
-          display!.position = currentPosition
-          currentPosition.x += display!.width
-          displayAtoms.append(display!)
+          decoratedDisplay.position = currentPosition
+          currentPosition.x += decoratedDisplay.width
+          displayAtoms.append(decoratedDisplay)
 
         case .radical:
           // Create the radical display first

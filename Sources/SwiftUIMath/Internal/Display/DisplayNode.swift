@@ -12,6 +12,8 @@ extension Math {
     var textColor: CGColor?
     var localTextColor: CGColor?
     var localBackgroundColor: CGColor?
+    var localBorderColor: CGColor?
+    var localBorderWidth: CGFloat = 0
 
     var bounds: CGRect {
       CGRect(x: position.x, y: position.y - descent, width: width, height: ascent + descent)

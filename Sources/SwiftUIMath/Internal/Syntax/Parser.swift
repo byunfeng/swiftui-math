@@ -787,6 +787,13 @@ extension Math {
         }
 
         return table
+      } else if command == "boxed" {
+        let boxed = ColorBox(renderStyle: .stroke)
+        boxed.innerList = self.buildInternal(true)
+        return boxed
+      } else if command == "hline" {
+        // \hline in aligned-like environments is treated as a no-op separator.
+        return Space(amount: 0)
       } else if command == "begin" {
         let env = self.readEnvironment()
         if env == nil {
@@ -822,6 +829,7 @@ extension Math {
           return nil
         }
         mathColorbox.colorString = color!
+        mathColorbox.renderStyle = .fill
         mathColorbox.innerList = self.buildInternal(true)
         return mathColorbox
       } else if command == "pmod" {
@@ -1125,6 +1133,12 @@ extension Math {
         under.innerList = self.buildInternal(true)
 
         return under
+      } else if command == "boxed" {
+        let boxed = ColorBox(renderStyle: .stroke)
+        boxed.innerList = self.buildInternal(true)
+        return boxed
+      } else if command == "hline" {
+        return Space(amount: 0)
       } else if command == "begin" {
         if let env = self.readEnvironment() {
           // Check if this is a starred matrix environment and read optional alignment
@@ -1156,6 +1170,7 @@ extension Math {
         // A color command has 2 arguments
         let mathColorbox = ColorBox()
         mathColorbox.colorString = self.readColor()!
+        mathColorbox.renderStyle = .fill
         mathColorbox.innerList = self.buildInternal(true)
         return mathColorbox
       } else {
